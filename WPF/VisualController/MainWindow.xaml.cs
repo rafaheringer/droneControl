@@ -9,7 +9,7 @@ using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Exceptions;
 
-namespace SerialDataReceiver
+namespace VisualController
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -19,9 +19,7 @@ namespace SerialDataReceiver
         #region variables
         //Richtextbox
         private FlowDocument flowDocument { get; set; }
-        private FlowDocument flowDocumentMyo { get; set; }
         private Paragraph paragraph { get; set; }
-        private Paragraph paragraphMyo { get; set; }
 
         //Control variables
         private const int PPMMin = 1000;    //Min rotation (1000)
@@ -34,23 +32,21 @@ namespace SerialDataReceiver
 
         //Serial control
         private string serialPortName;
-        private Services.SerialCommService serialCommService { get; set; }
+        private SerialDataReceiver.Services.SerialCommService serialCommService { get; set; }
         #endregion
 
         public MainWindow()
         {
             //Variables
             flowDocument = new FlowDocument();
-            flowDocumentMyo = new FlowDocument();
             paragraph = new Paragraph();
-            paragraphMyo = new Paragraph();
 
             PPMThrottle = PPMMin;
             PPMAileron = PPMMid;
             PPMElevator = PPMMid;
             PPMRudder = PPMMid;
 
-            serialCommService = new Services.SerialCommService();
+            serialCommService = new SerialDataReceiver.Services.SerialCommService();
 
             //Components
             InitializeComponent();
@@ -67,35 +63,9 @@ namespace SerialDataReceiver
             this.KeyDown += new KeyEventHandler(OnButtonKeyDown);
             this.KeyUp += new KeyEventHandler(OnButtonKeyUp);
 
-            //Create a hub that will manage Myo devices for us
-            using (var channel = Channel.Create(ChannelDriver.Create(ChannelBridge.Create(), MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create()))))
-            using (var hub = Hub.Create(channel))
-            {
-                // listen for when the Myo connects
-                hub.MyoConnected += (sender, e) =>
-                {
-                    Myo_SendToDebug(String.Format("Myo {0} has connected!", e.Myo.Handle));
-                    e.Myo.Vibrate(VibrationType.Short);
-                    e.Myo.PoseChanged += Myo_PoseChanged;
-                    e.Myo.Locked += Myo_Locked;
-                    e.Myo.Unlocked += Myo_Unlocked;
-                };
+            //Myo
+            //new MyoHandler();
 
-                // listen for when the Myo disconnects
-                hub.MyoDisconnected += (sender, e) =>
-                {
-                    Myo_SendToDebug(String.Format("Oh no! It looks like {0} arm Myo has disconnected!", e.Myo.Arm));
-                    e.Myo.PoseChanged -= Myo_PoseChanged;
-                    e.Myo.Locked -= Myo_Locked;
-                    e.Myo.Unlocked -= Myo_Unlocked;
-                };
-
-                // start listening for Myo data
-                channel.StartListening();
-
-                // wait on user input
-                Myo_UserInputLoop(hub);
-            }
         }
 
         private void OnButtonKeyDown(object sender, KeyEventArgs e)
@@ -175,56 +145,7 @@ namespace SerialDataReceiver
                 connectBtn.Content = "Connect";
             }
         }
-
-        #region Myo Event Handlers
-        private void Myo_UserInputLoop(IHub hub) {
-            string userInput;
-            while (!string.IsNullOrEmpty((userInput = Console.ReadLine())))
-            {
-                if (userInput.Equals("pose", StringComparison.OrdinalIgnoreCase))
-                {
-                    foreach (var myo in hub.Myos)
-                    {
-                        Myo_SendToDebug(String.Format("Myo {0} in pose {1}.", myo.Handle, myo.Pose));
-                    }
-                }
-                else if (userInput.Equals("arm", StringComparison.OrdinalIgnoreCase))
-                {
-                    foreach (var myo in hub.Myos)
-                    {
-                        Myo_SendToDebug(String.Format("Myo {0} is on {1} arm.", myo.Handle, myo.Arm.ToString().ToLower()));
-                    }
-                }
-                else if (userInput.Equals("count", StringComparison.OrdinalIgnoreCase))
-                {
-                    Myo_SendToDebug(String.Format("There are {0} Myo(s) connected.", hub.Myos.Count));
-                }
-            }
-        } 
-
-        private void Myo_SendToDebug(string text)
-        {
-            paragraphMyo.Inlines.Add(text);
-            flowDocumentMyo.Blocks.Add(paragraphMyo);
-            myoDataRichTextBox.Document = flowDocumentMyo;
-        } 
-
-        private void Myo_PoseChanged(object sender, PoseEventArgs e)
-        {
-            Myo_SendToDebug(String.Format("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose));
-        }
-
-        private void Myo_Unlocked(object sender, MyoEventArgs e)
-        {
-            Myo_SendToDebug(String.Format("{0} arm Myo has unlocked!", e.Myo.Arm));
-        }
-
-        private void Myo_Locked(object sender, MyoEventArgs e)
-        {
-            Myo_SendToDebug(String.Format("{0} arm Myo has locked!", e.Myo.Arm));
-        }
-        #endregion
-
+        
         #region Receiving
 
         private delegate void UpdateUiTextDelegate(string text);
