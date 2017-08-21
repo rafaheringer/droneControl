@@ -24,7 +24,7 @@ namespace VisualController
 
         private FlowDocument flowDocumentMyo;
         private Paragraph paragraphMyo;
-        private InputManager inputManager;
+        private DroneControl.Input.InputManager inputManager;
 
         //Control variables
         private const int PPMMin = 1000;    //Min rotation (1000)
@@ -75,7 +75,7 @@ namespace VisualController
             MyoInput myoInput = new MyoInput();
             this.Activated += (sender, e) => myoInput.Active = true;
             this.Deactivated += (sender, e) => myoInput.Active = false;
-            inputManager.addControl(myoInput);
+            inputManager.AddControl(myoInput);
             //MyoHandler();
         }
 

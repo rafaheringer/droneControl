@@ -24,43 +24,38 @@ namespace DroneControl.Input
         /// peripheral (e.g. keyboard, mouse) and raise events to trigger 
         /// actions. This method schould be invoked periodically via a Timer in the main Form
         /// </summary>
-        public abstract void processInput();
+        public abstract void ProcessInput();
 
         #region .Methods for Triggering the events.
         protected void OnEmergency()
         {
-            if (Emergency != null)
-                Emergency();
+            Emergency?.Invoke();
         }
 
         protected void OnLand()
         {
-            if (Land != null)
-                Land();
+            Land?.Invoke();
         }
 
         protected void OnTakeoff()
         {
-            if (Takeoff != null)
-                Takeoff();
+            Takeoff?.Invoke();
         }
 
         protected void OnFlatTrim()
         {
-            if (FlatTrim != null)
-                FlatTrim();
+            FlatTrim?.Invoke();
         }
 
         protected void OnHover()
         {
-            if (Hover != null)
-                Hover();
+            Hover?.Invoke();
         }
 
         protected void OnProgress(float roll = 0, float pitch = 0, float yaw = 0, float gaz = 0)
         {
             if (Emergency != null)
-                Progress(mode, roll, pitch, yaw, gaz);
+                Progress(roll, pitch, yaw, gaz);
         }
         #endregion
     }

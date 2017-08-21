@@ -17,7 +17,7 @@ namespace DroneControl.Input
         /// schedule calculation time via calls to processInput()
         /// </summary>
         /// <param name="input">input module to manage</param>
-        public void addControl(Input input)
+        public void AddControl(Input input)
         {
             // Redirect the raised events
             input.Emergency += this.OnEmergency;
@@ -32,7 +32,7 @@ namespace DroneControl.Input
             input.FlatTrim += () => commandWasSent = true;
             input.Hover += () => commandWasSent = true;
             input.Land += () => commandWasSent = true;
-            input.Progress += (mode, roll, pitch, yaw, gaz) => commandWasSent = true;
+            input.Progress += (roll, pitch, yaw, gaz) => commandWasSent = true;
             input.Takeoff += () => commandWasSent = true;
 
             inputs.Add(input);
@@ -42,11 +42,11 @@ namespace DroneControl.Input
         /// Instructs all managed input modules to process their associated input device
         /// and generate commands. Should be called regularly
         /// </summary>
-        public override void processInput()
+        public override void ProcessInput()
         {
             foreach (Input input in inputs)
             {
-                input.processInput();
+                input.ProcessInput();
             }
 
             if (commandWasSent == false)

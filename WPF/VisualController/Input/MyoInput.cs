@@ -56,7 +56,7 @@ namespace DroneControl.Input
             worker.Start();
         }
 
-        public override void processInput()
+        public override void ProcessInput()
         {
             lock (myLock)
             {
