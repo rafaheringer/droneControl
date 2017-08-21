@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Exceptions;
+using DroneControl.Input;
+using System.Windows.Input;
 
 namespace VisualController
 {
@@ -18,21 +19,25 @@ namespace VisualController
     {
         #region variables
         //Richtextbox
-        private FlowDocument flowDocument { get; set; }
-        private Paragraph paragraph { get; set; }
+        private FlowDocument flowDocument;
+        private Paragraph paragraph;
+
+        private FlowDocument flowDocumentMyo;
+        private Paragraph paragraphMyo;
+        private InputManager inputManager;
 
         //Control variables
         private const int PPMMin = 1000;    //Min rotation (1000)
         private const int PPMMax = 2000;    //Max rotation (2000)
         private const int PPMMid = 1500;
-        public int PPMThrottle { get; set; }
-        public int PPMAileron { get; set; }
-        public int PPMElevator { get; set; }
-        public int PPMRudder { get; set; }
+        public int PPMThrottle;
+        public int PPMAileron;
+        public int PPMElevator;
+        public int PPMRudder;
 
         //Serial control
         private string serialPortName;
-        private SerialDataReceiver.Services.SerialCommService serialCommService { get; set; }
+        private SerialDataReceiver.Services.SerialCommService serialCommService;
         #endregion
 
         public MainWindow()
@@ -40,6 +45,9 @@ namespace VisualController
             //Variables
             flowDocument = new FlowDocument();
             paragraph = new Paragraph();
+
+            paragraphMyo = new Paragraph();
+            flowDocumentMyo = new FlowDocument();
 
             PPMThrottle = PPMMin;
             PPMAileron = PPMMid;
@@ -64,8 +72,11 @@ namespace VisualController
             this.KeyUp += new KeyEventHandler(OnButtonKeyUp);
 
             //Myo
-            //new MyoHandler();
-
+            MyoInput myoInput = new MyoInput();
+            this.Activated += (sender, e) => myoInput.Active = true;
+            this.Deactivated += (sender, e) => myoInput.Active = false;
+            inputManager.addControl(myoInput);
+            //MyoHandler();
         }
 
         private void OnButtonKeyDown(object sender, KeyEventArgs e)
@@ -145,7 +156,7 @@ namespace VisualController
                 connectBtn.Content = "Connect";
             }
         }
-        
+
         #region Receiving
 
         private delegate void UpdateUiTextDelegate(string text);
@@ -316,5 +327,60 @@ namespace VisualController
         #endregion
 
         #endregion
+
+        #region Myo Events
+        private void MyoHandler()
+        {
+            //Create a hub that will manage Myo devices for us
+            var channel = Channel.Create(ChannelDriver.Create(ChannelBridge.Create(), MyoErrorHandlerDriver.Create(MyoErrorHandlerBridge.Create())));
+            var hub = Hub.Create(channel);
+
+            // listen for when the Myo connects
+            hub.MyoConnected += (sender, e) =>
+            {
+                Myo_SendToDebug(String.Format("Myo {0} has connected!", e.Myo.Handle));
+                e.Myo.Vibrate(VibrationType.Short);
+                e.Myo.PoseChanged += Myo_PoseChanged;
+                e.Myo.Locked += Myo_Locked;
+                e.Myo.Unlocked += Myo_Unlocked;
+            };
+
+            // listen for when the Myo disconnects
+            hub.MyoDisconnected += (sender, e) =>
+            {
+                Myo_SendToDebug(String.Format("Oh no! It looks like {0} arm Myo has disconnected!", e.Myo.Arm));
+                e.Myo.PoseChanged -= Myo_PoseChanged;
+                e.Myo.Locked -= Myo_Locked;
+                e.Myo.Unlocked -= Myo_Unlocked;
+            };
+
+            // start listening for Myo data
+            channel.StartListening();
+        }
+
+        private void Myo_SendToDebug(string text)
+        {
+            paragraphMyo.Inlines.Add(text);
+            flowDocumentMyo.Blocks.Add(paragraphMyo);
+            myoDataRichTextBox.Document = flowDocumentMyo;
+        }
+
+        private void Myo_PoseChanged(object sender, PoseEventArgs e)
+        {
+            Myo_SendToDebug(String.Format("{0} arm Myo detected {1} pose!", e.Myo.Arm, e.Myo.Pose));
+        }
+
+        private void Myo_Unlocked(object sender, MyoEventArgs e)
+        {
+            Myo_SendToDebug(String.Format("{0} arm Myo has unlocked!", e.Myo.Arm));
+        }
+
+        private void Myo_Locked(object sender, MyoEventArgs e)
+        {
+            Myo_SendToDebug(String.Format("{0} arm Myo has locked!", e.Myo.Arm));
+        }
+        #endregion
+
     }
 }
+
