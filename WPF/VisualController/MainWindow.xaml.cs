@@ -55,7 +55,7 @@ namespace VisualController
             connectBtn.Content = "Connect";
 
             //Get all connected serial ports
-            IEnumerable<string> serialPorts = Services.SerialCommService.GetOpenedSerialComms();
+            IEnumerable<string> serialPorts = SerialDataReceiver.Services.SerialCommService.GetOpenedSerialComms();
             commPortNames.ItemsSource = serialPorts;
             commPortNames.SelectedIndex = 0;
 
@@ -182,6 +182,8 @@ namespace VisualController
             throttleText.Text = PPMThrottle.ToString();
             aileronText.Text = PPMAileron.ToString();
             elevatorText.Text = PPMElevator.ToString();
+
+
             rudderText.Text = PPMRudder.ToString();
 
             serialCommService.SendLine(String.Concat(PPMThrottle.ToString(), ",", PPMAileron.ToString(), ",", PPMElevator.ToString(), ",", PPMRudder.ToString()));
