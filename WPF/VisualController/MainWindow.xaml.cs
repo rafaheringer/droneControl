@@ -7,7 +7,6 @@ using MahApps.Metro.Controls;
 using MyoSharp.Communication;
 using MyoSharp.Device;
 using MyoSharp.Exceptions;
-using DroneControl.Input;
 using System.Windows.Input;
 
 namespace VisualController
@@ -24,7 +23,6 @@ namespace VisualController
 
         private FlowDocument flowDocumentMyo;
         private Paragraph paragraphMyo;
-        private DroneControl.Input.InputManager inputManager;
 
         //Control variables
         private const int PPMMin = 1000;    //Min rotation (1000)
@@ -72,11 +70,7 @@ namespace VisualController
             this.KeyUp += new KeyEventHandler(OnButtonKeyUp);
 
             //Myo
-            MyoInput myoInput = new MyoInput();
-            this.Activated += (sender, e) => myoInput.Active = true;
-            this.Deactivated += (sender, e) => myoInput.Active = false;
-            inputManager.AddControl(myoInput);
-            //MyoHandler();
+            ,MyoHandler();
         }
 
         private void OnButtonKeyDown(object sender, KeyEventArgs e)
