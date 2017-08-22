@@ -20,6 +20,7 @@
     "method-override": "^2.3.0",
     "morgan": "^1.6.1",
     "myo": "^3.0.0",
+    "serialport": "^5.0.0",
     "serve-favicon": "^2.3.0",
     "ws": "^3.1.0"
   },

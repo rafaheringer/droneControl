@@ -1,20 +1,11 @@
-var Express = require('express'),
-	Myo = require("Myo"),
+var express = require('express'),
+	serialComm = require('./modules/serialComm'),
 	Config = require('./config/config');
 
-var app = Express();
-
+var app = express();
 module.exports = require('./config/express')(app, Config);
-Myo.connect('com.rafaheringer.droneControl', require('ws'));
 
-Myo.on('fist', function(){
-	console.log('Hello Myo!');
-	this.vibrate();
-});
-
-Myo.on('connected', function(){
-	console.log('connected!', this.id)
-  });
+serialComm.connect();
 
 app.listen(Config.port, function () {
 	console.log('Express server listening on port ' + Config.port);
