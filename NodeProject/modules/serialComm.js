@@ -22,8 +22,11 @@ registerEvent(eventsList.sendDataError.name, ob => {console.error('SerialComm se
 registerEvent(eventsList.connectionError.name, ob => {console.error('SerialComm connection: ', ob.error);});
 
 /////////////////////Connection
-function getAvailableSerialPorts() {
-
+function getAvailableSerialPorts(callback) {
+    if(connectedPort)
+        return connectedPort.list(callback);
+    else
+        return eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: 'You need to connect to any port first'}, eventsList.connectionError));
 };
 
 function connect(serialPortName, serialPortOptions){
@@ -47,7 +50,7 @@ function disconnect() {
             console.log('SerialComm disconnect: connection closed');
         });
     else
-        eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: 'You need to connect to any port first'}, eventsList.connectionError));
+        return eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: 'You need to connect to any port first'}, eventsList.connectionError));
     
 };
 
