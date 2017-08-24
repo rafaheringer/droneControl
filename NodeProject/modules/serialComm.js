@@ -23,10 +23,7 @@ registerEvent(eventsList.connectionError.name, ob => {console.error('SerialComm 
 
 /////////////////////Connection
 function getAvailableSerialPorts(callback) {
-    if(connectedPort)
-        return connectedPort.list(callback);
-    else
-        return eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: 'You need to connect to any port first'}, eventsList.connectionError));
+    return  serialPort.list(callback);
 };
 
 function connect(serialPortName, serialPortOptions){

@@ -823,7 +823,7 @@ html {
 body {
   height: 100%;
   width: 100%;
-  background: #10161d url('/img/dot_grid.png');
+  background: #10161d url('/assets/img/dot_grid.png');
   font-family: 'blender_prothin';
   font-size: 12px;
   color: #58bccc;
@@ -2235,7 +2235,7 @@ button:hover,button.selected {
   left: -8px;
   height: 20px;
   width: 20px;
-  background-image: url('/img/triangle_pointer.svg')
+  background-image: url('/assets/img/triangle_pointer.svg')
 }
 
 .battery .dataSection .batteryBar.section0 {

@@ -1,5 +1,4 @@
 var express = require('express'),
-	serialComm = require('./modules/serialComm'),
 	Config = require('./config/config');
 
 var app = express();
