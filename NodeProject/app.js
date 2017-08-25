@@ -1,9 +1,28 @@
 var express = require('express'),
-	Config = require('./config/config');
+ 	http = require('http'),
+	config = require('./config/config'),
+	app = express(),
+	httpServer = http.createServer(app),
+	socketServer = require('socket.io')(httpServer);
 
-var app = express();
-module.exports = require('./config/express')(app, Config);
+module.exports = require('./config/express')(app, config);
 
-app.listen(Config.port, function () {
-	console.log('Express server listening on port ' + Config.port);
+httpServer.listen(config.port, () => {
+	console.log('Express server listening on port ' + config.port);
 });
+
+//On connect to socket
+socketServer.on('connection', uniqueSocket => {
+	console.log('Socket: user connected');
+
+	//
+	uniqueSocket.on('foo', () => {
+		console.log('OOOOOOOOOOOOOOOOOi');
+	});
+
+	//Disconnection
+	uniqueSocket.on('disconnect', () => {
+		console.log('Socket: user disconnected');
+	});
+});
+

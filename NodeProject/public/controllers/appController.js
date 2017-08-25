@@ -1,9 +1,9 @@
-(function () {
+(() =>{
     'use strict';
 
     angular
         .module('droneControlApp')
-        .controller('mainAppController', ['$scope', function($scope){
-            $scope.foo = 'bar';
+        .controller('mainAppController', ['$scope', 'serialCommFactory', function($scope, serialCommFactory) {
+            var comm = serialCommFactory();
         }]);
 })();

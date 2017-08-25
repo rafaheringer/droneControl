@@ -1,4 +1,4 @@
-(function () {
+(() =>{
     'use strict';
 
     //Custom modules
@@ -11,11 +11,14 @@
     //Main app
     angular.module('droneControlApp', [
          //Custom modules 
-          "app.directives"
-        , "app.services"
-        , "app.factories"
-        , "app.providers"
-        , "app.filters"
+          'app.directives'
+        , 'app.services'
+        , 'app.factories'
+        , 'app.providers'
+        , 'app.filters'
+
+        //Third party
+        , 'btford.socket-io'
     ])
     
     //Configuration
