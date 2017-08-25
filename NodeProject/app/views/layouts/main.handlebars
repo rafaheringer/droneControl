@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="droneControlApp">
 
 <head>
 	<meta charset="UTF-8">
@@ -15,11 +15,12 @@
 </head>
 
 <body>
-	<div class="diagnosticsPage">
+	<div class="diagnosticsPage" ng-controller="mainAppController">
 		{{{body}}}
 	</div>
 
 	<script src="/components/angular/angular.min.js"></script>
 	<script src="/app.js"></script>
+	<script src="/controllers/appController.js"></script>
 </body>
 </html>
