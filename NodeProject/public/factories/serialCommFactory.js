@@ -7,9 +7,14 @@
             return () => {
                 var socketClient = socketFactory({ ioSocket: io.connect() });
 
-                setInterval(() => {
-                    socketClient.emit('foo');
-                }, 2000);
+                function send(message) {
+                    socketClient.emit(message);
+                }
+
+                return {
+                    send: send
+                }
+
             }
         }]);
 })();

@@ -3,7 +3,14 @@
 
     angular
         .module('droneControlApp')
-        .controller('mainAppController', ['$scope', 'serialCommFactory', function($scope, serialCommFactory) {
-            var comm = serialCommFactory();
+        .controller('mainAppController', ['$scope', 'droneFactory', function($scope, droneFactory) {
+
+            //Drone instance
+            var droneController = droneFactory();
+
+            setInterval(()=>{
+                droneController.start();
+            }, 2000);
+            
         }]);
 })();
