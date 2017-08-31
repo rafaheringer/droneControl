@@ -3,13 +3,13 @@
 
     angular
         .module('droneControlApp')
-        .controller('mainAppController', ['$scope', 'droneFactory', function($scope, droneFactory) {
+        .controller('mainAppController', ['$scope', 'droneFactory', ($scope, droneFactory) => {
 
             //Drone instance
-            var droneController = droneFactory();
+            var droneController = droneFactory;
 
             setInterval(()=>{
-                droneController.start();
+                droneController.warmUp();
             }, 2000);
             
         }]);

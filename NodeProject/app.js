@@ -16,8 +16,8 @@ socketServer.on('connection', uniqueSocket => {
 	console.log('Socket: user connected');
 
 	//
-	uniqueSocket.on('foo', () => {
-		console.log('OOOOOOOOOOOOOOOOOi');
+	uniqueSocket.on('droneCommand', (command) => {
+		console.log('DroneCommand received:', command);
 	});
 
 	//Disconnection

@@ -1,20 +1,20 @@
 (() =>{
     'use strict';
 
+    //Serial communication Class
+    class SerialComm {
+        constructor(socketFactory) {
+            this.socketClient = socketFactory({ ioSocket: io.connect() });
+        }
+
+        send(message, command) {
+            console.log('Socket sent:', message, command);
+            this.socketClient.emit(message, command);
+        }
+    }
+
+    //Angular module
     angular
         .module('app.factories')
-        .factory('serialCommFactory', ['socketFactory', socketFactory => {
-            return () => {
-                var socketClient = socketFactory({ ioSocket: io.connect() });
-
-                function send(message) {
-                    socketClient.emit(message);
-                }
-
-                return {
-                    send: send
-                }
-
-            }
-        }]);
+        .factory('serialCommFactory', (socketFactory) => new SerialComm(socketFactory));
 })();
