@@ -3,6 +3,8 @@ var express = require('express'),
 	config = require('./config/config'),
 	app = express(),
 	httpServer = http.createServer(app),
+	droneControl = require('./modules/droneControl.js'),
+	serialComm = require('./modules/serialComm'),
 	socketServer = require('socket.io')(httpServer);
 
 module.exports = require('./config/express')(app, config);
@@ -15,9 +17,20 @@ httpServer.listen(config.port, () => {
 socketServer.on('connection', uniqueSocket => {
 	console.log('Socket: user connected');
 
-	//
-	uniqueSocket.on('droneCommand', (command) => {
-		console.log('DroneCommand received:', command);
+	var myDrone = new droneControl.drone(serialComm);
+
+
+	//Drone commands
+	uniqueSocket.on('droneCommand', (options) => {
+		console.log('DroneCommand received:', options);
+
+
+		switch(options.command) {
+			case 'warmUp':
+				myDrone.connect();
+				myDrone.levelUp(100);
+			break;
+		}
 	});
 
 	//Disconnection
