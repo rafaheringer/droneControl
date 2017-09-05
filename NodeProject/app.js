@@ -19,7 +19,6 @@ socketServer.on('connection', uniqueSocket => {
 
 	var myDrone = new droneControl.drone(serialComm);
 
-
 	//Drone commands
 	uniqueSocket.on('droneCommand', (options) => {
 		console.log('DroneCommand received:', options);
