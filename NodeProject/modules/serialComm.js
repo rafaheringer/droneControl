@@ -53,7 +53,7 @@ function disconnect() {
 
 /////////////////////Data
 function sendData(line) {
-    if(!line || typeof line != string)
+    if(!line || typeof line != 'string')
         return eventHandler.emit(eventsList.sendDataError.eventName, extendObject({error: '"line" is must defined and need to be a string.'}, eventsList.sendDataError));
 
     if(connectedPort)
@@ -66,7 +66,7 @@ function sendData(line) {
         });
 
     else 
-        return eventHandler.emit(eventsList.sendDataError.eventName, extendObject({error: err}, eventsList.sendDataError));
+        return eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: 'You need to connect to any port first'}, eventsList.connectionError));
 };
 
 /////////////////////Exports

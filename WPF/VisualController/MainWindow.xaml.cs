@@ -70,7 +70,7 @@ namespace VisualController
             this.KeyUp += new KeyEventHandler(OnButtonKeyUp);
 
             //Myo
-            ,MyoHandler();
+            MyoHandler();
         }
 
         private void OnButtonKeyDown(object sender, KeyEventArgs e)

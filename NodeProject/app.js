@@ -27,7 +27,7 @@ socketServer.on('connection', uniqueSocket => {
 		switch(options.command) {
 			case 'warmUp':
 				myDrone.connect();
-				myDrone.levelUp(100);
+				myDrone.levelUp(100, 1000);
 			break;
 		}
 	});

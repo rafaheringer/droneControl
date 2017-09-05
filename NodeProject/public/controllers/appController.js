@@ -8,9 +8,11 @@
             //Drone instance
             var droneController = droneFactory;
 
-            setInterval(()=>{
-                droneController.warmUp();
-            }, 2000);
+            droneController.warmUp();
+
+            // setInterval(()=>{
+            //     droneController.warmUp();
+            // }, 2000);
             
         }]);
 })();
