@@ -23,11 +23,12 @@ registerEvent(eventsList.connectionError.name, ob => {console.error('SerialComm 
 
 /////////////////////Connection
 function getAvailableSerialPorts(callback) {
-    return  serialPort.list(callback);
+    return serialPort.list(callback);
 };
 
-function connect(serialPortName, serialPortOptions){
-    connectedPort = new serialPort(serialPortName, serialPortOptions);
+function connect(serialPortName, serialPortOptions, callback){
+    connectedPort = new serialPort(serialPortName, serialPortOptions, callback);
+
     connectedPort.on('error', err => {
         eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: err}, eventsList.connectionError));
     });
@@ -35,6 +36,8 @@ function connect(serialPortName, serialPortOptions){
     connectedPort.on('data', line => {
          eventHandler.emit(eventsList.receiveData.name, extendObject({line: line}, eventsList.receiveData));
     });
+
+    return connectedPort;
 };
 
 function disconnect() {

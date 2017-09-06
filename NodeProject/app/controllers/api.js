@@ -15,8 +15,9 @@ router.get('/api/serial/getPorts', (req, res, next) => {
 
 router.route('/api/serial/connect').post((req, res, next) => {
     try {
-        serialComm.connect(req.body.name);
-        res.status(200);
+        serialComm.connect(req.body.comName, null, (error, result) => {
+            res.json(result);
+        });
     } catch(ex) {
         res.status(500).json({message: 'Error on connect to the serial port.'});
     }

@@ -104,7 +104,11 @@ let DroneControl = (()=>{
         }
     
         levelDown(forcePercentage, timeToExecute) {
-            
+            console.log('DroneControl levelUp', arguments);
+
+            _setPPM('throttle', _PPMMax - ((forcePercentage * _PPMMax) / 100), timeToExecute, () => {
+                _setPPM('throttle', _PPMMid);
+            });
         }
     }
 
