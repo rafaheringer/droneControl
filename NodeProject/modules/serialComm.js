@@ -18,8 +18,9 @@ let eventsList = {
     receiveData: {eventName: 'receiveData', line: null}
 };
 
-registerEvent(eventsList.sendDataError.name, ob => {console.error('SerialComm sendData: ', ob.error);});
-registerEvent(eventsList.connectionError.name, ob => {console.error('SerialComm connection: ', ob.error);});
+registerEvent(eventsList.sendDataError.name, ob => console.error('SerialComm sendData error: ', ob.error));
+registerEvent(eventsList.connectionError.name, ob => console.error('SerialComm connection error: ', ob.error));
+registerEvent(eventsList.receiveData.name, ob => {if(ob.line) console.log('SerialComm receivedData:', ob.line)});
 
 /////////////////////Connection
 function getAvailableSerialPorts(callback) {
@@ -29,20 +30,17 @@ function getAvailableSerialPorts(callback) {
 function connect(serialPortName, serialPortOptions, callback){
     connectedPort = new serialPort(serialPortName, serialPortOptions, callback);
 
-    connectedPort.on('error', err => {
-        eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: err}, eventsList.connectionError));
-    });
+    console.log('SerialComm connect: connected');
 
-    connectedPort.on('data', line => {
-         eventHandler.emit(eventsList.receiveData.name, extendObject({line: line}, eventsList.receiveData));
-    });
+    connectedPort.on('error', err => eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: err}, eventsList.connectionError)));
+    connectedPort.on('data', line => eventHandler.emit(eventsList.receiveData.name, extendObject({line: line}, eventsList.receiveData)));
 
     return connectedPort;
 };
 
 function disconnect() {
     if(connectedPort)
-        connectedPort.close(err => {
+        return connectedPort.close(err => {
             if(err)
                 return eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: err}, eventsList.connectionError));
 
@@ -56,11 +54,11 @@ function disconnect() {
 
 /////////////////////Data
 function sendData(line) {
-    if(!line || typeof line != 'string')
+    if((!line || typeof line != 'string') && (line += '\n'))
         return eventHandler.emit(eventsList.sendDataError.eventName, extendObject({error: '"line" is must defined and need to be a string.'}, eventsList.sendDataError));
 
     if(connectedPort)
-        connectedPort.write(line, err => {
+        return connectedPort.write(line, err => {
             if(err) 
                 return eventHandler.emit(eventsList.sendDataError.eventName, extendObject({error: err}, eventsList.sendDataError));
 

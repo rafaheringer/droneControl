@@ -15,7 +15,9 @@ router.get('/api/serial/getPorts', (req, res, next) => {
 
 router.route('/api/serial/connect').post((req, res, next) => {
     try {
-        serialComm.connect(req.body.comName, null, (error, result) => {
+        serialComm.connect(req.body.comName, {
+            baudRate: 115200
+        }, (error, result) => {
             res.json(result);
         });
     } catch(ex) {
