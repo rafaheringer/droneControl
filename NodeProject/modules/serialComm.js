@@ -54,7 +54,10 @@ function disconnect() {
 
 /////////////////////Data
 function sendData(line) {
-    if((!line || typeof line != 'string') && (line += '\n'))
+    line += '\n';
+    console.log('SerialComm sending data:', line);
+
+    if((!line || typeof line != 'string'))
         return eventHandler.emit(eventsList.sendDataError.eventName, extendObject({error: '"line" is must defined and need to be a string.'}, eventsList.sendDataError));
 
     if(connectedPort)
@@ -62,7 +65,7 @@ function sendData(line) {
             if(err) 
                 return eventHandler.emit(eventsList.sendDataError.eventName, extendObject({error: err}, eventsList.sendDataError));
 
-            console.log('SerialComm sendData: ', line);
+            console.log('SerialComm sentData: ', line);
             eventHandler.emit(eventsList.dataSent.name, extendObject({line: line}, eventsList.dataSent));
         });
 

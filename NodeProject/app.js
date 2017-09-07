@@ -2,18 +2,55 @@ var express = require('express'),
  	http = require('http'),
 	config = require('./config/config'),
 	app = express(),
+	path = require('path'),
 	httpServer = http.createServer(app),
 	droneControl = require('./modules/droneControl.js'),
 	serialComm = require('./modules/serialComm'),
+	bodyParser = require('body-parser'),
+	router = express.Router(),
 	socketServer = require('socket.io')(httpServer);
 
-module.exports = require('./config/express')(app, config);
-
+//Server
+//===============================
 httpServer.listen(config.port, () => {
 	console.log('Express server listening on port ' + config.port);
 });
 
+
+//API routes
+//===============================
+app.route('/api/serial/getPorts').get((req, res, next) => {
+    serialComm.getAvailableSerialPorts((error, result) => {
+        res.json(result);
+    });
+});
+
+app.route('/api/serial/connect').post((req, res, next) => {
+    try {
+        serialComm.connect(req.body.comName, {
+            baudRate: 115200
+        }, (error, result) => {
+            res.json(result);
+        });
+    } catch(ex) {
+        res.status(500).json({message: 'Error on connect to the serial port.'});
+    }
+});
+
+//Web APP routes
+//===============================
+app.route('/').get((req, res, next) => {
+    res.render('index', {
+      title: 'MYO Drone Controller'
+    });
+});
+
+
+
+module.exports = require('./config/express')(app, config);
+
 //On connect to socket
+//===============================
 socketServer.on('connection', uniqueSocket => {
 	console.log('Socket: user connected');
 

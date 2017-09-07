@@ -5,7 +5,7 @@ let DroneControl = (()=>{
     let _serialComm;
     let _setPPM;
 
-    const _PPMMin = 1000; //Min rotation (1000)
+    const _PPMMin = 800; //Min rotation (1000)
     const _PPMMax = 2000; //Max rotation (2000)
     const _PPMMid = 1500; 
 
@@ -13,6 +13,8 @@ let DroneControl = (()=>{
     let _PPMAileron =   _PPMMid;
     let _PPMElevator =  _PPMMid;
     let _PPMRudder =    _PPMMid;
+
+    let _PPMThrottleEstable = 1200;
 
     let _executionQueue = [];
 
@@ -99,7 +101,7 @@ let DroneControl = (()=>{
             console.log('DroneControl levelUp', arguments);
 
             _setPPM('throttle', (forcePercentage * _PPMMax) / 100, timeToExecute, () => {
-                _setPPM('throttle', _PPMMid);
+                _setPPM('throttle', _PPMThrottleEstable);
             });
         }
     
@@ -107,7 +109,7 @@ let DroneControl = (()=>{
             console.log('DroneControl levelUp', arguments);
 
             _setPPM('throttle', _PPMMax - ((forcePercentage * _PPMMax) / 100), timeToExecute, () => {
-                _setPPM('throttle', _PPMMid);
+                _setPPM('throttle', _PPMMin);
             });
         }
     }
