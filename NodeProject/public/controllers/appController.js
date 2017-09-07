@@ -4,8 +4,8 @@
     angular
         .module('droneControlApp')
         .controller('mainAppController', 
-        ['$scope', 'droneFactory', 'serialCommService', '$timeout',
-        ($scope, droneFactory, serialCommService, $timeout) => {
+        ['$scope', 'droneFactory', 'serialCommService', '$timeout', 'myoFactory',
+        ($scope, droneFactory, serialCommService, $timeout, myoFactory) => {
             let controllerData = {
                 comPorts: [],
                 connectedPort: null
@@ -29,14 +29,15 @@
                         $timeout(getAvailablePorts, 1000);
                     }
     
-                    //Try to connect to the unique port
-                    else if(controllerData.comPorts.length == 1) {
-                        connectToPort(controllerData.comPorts[0]);
-                    }
-    
+                    //Try to connect to Arduino
                     else {
-    
+                        var found = false;
+                        angular.forEach(controllerData.comPorts, (port)=> {
+                            if(!found && port.manufacturer.toLowerCase().indexOf('arduino') != -1)
+                                connectToPort(port);
+                        });
                     }
+    
                 });
             }
 
@@ -45,11 +46,20 @@
                 serialCommService.connectToPort(port.comName).then(response => {
                     console.log('serialCommService connected to port:', port);
                     controllerData.connectedPort = port;
+                }, () => {
+                    console.error('serialCommService connectToPort: port connection error.');
                 });
             }
             
             //Drone instance
             var droneController = droneFactory;
+
+            //Myo instance
+            var myoController = myoFactory;
+
+            myoController.deviceEventRegister('fist', () => {
+                console.log('FOOOOOOOOOOOOOOOOOOOOOOOO');
+            });
 
             init();
 
@@ -57,7 +67,8 @@
                 getAvailablePorts: getAvailablePorts,
                 controllerData: controllerData,
                 connectToPort: connectToPort,
-                droneController: droneController
+                droneController: droneController,
+                myoController: myoController
             });
             
         }]);

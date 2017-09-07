@@ -2,20 +2,19 @@ var express = require('express'),
  	http = require('http'),
 	config = require('./config/config'),
 	app = express(),
-	path = require('path'),
 	httpServer = http.createServer(app),
 	droneControl = require('./modules/droneControl.js'),
 	serialComm = require('./modules/serialComm'),
-	bodyParser = require('body-parser'),
-	router = express.Router(),
 	socketServer = require('socket.io')(httpServer);
+
+///TODO: Uncople the API server from WEB APP
+///TODO: Remove Handlebars
 
 //Server
 //===============================
 httpServer.listen(config.port, () => {
 	console.log('Express server listening on port ' + config.port);
 });
-
 
 //API routes
 //===============================
@@ -44,8 +43,6 @@ app.route('/').get((req, res, next) => {
       title: 'MYO Drone Controller'
     });
 });
-
-
 
 module.exports = require('./config/express')(app, config);
 

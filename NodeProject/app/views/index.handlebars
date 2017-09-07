@@ -50,6 +50,20 @@
 		</div>
 		<button ng-repeat="port in controllerData.comPorts" ng-click="connectToPort(port)" ng-bind="port.comName" ng-class="{selected: port.comName == controllerData.connectedPort.comName}"></button>
 	</div>
+
+	<div class="lock">
+		<div class="title">
+			<div class="text">
+				<span>MYO Conn</span>
+			</div>
+
+			<div class="lines">
+				<div class="upperLine"></div>
+				<div class="lowerLine"></div>
+			</div>
+		</div>
+		<button ng-click="myoController.connected ? myoController.disconnect() : myoController.start()" ng-bind="myoController.connected ? 'CONNECTED': 'CONNECT'" ng-class="{'selected': myoController.connected}"></button>
+	</div>
 </div>
 
 <div class="overrides component" style="position: absolute; left: 711px; top: 41px;">
