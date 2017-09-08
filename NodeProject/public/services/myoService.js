@@ -1,31 +1,30 @@
-(() =>{
+let MyoService = (() => {
     'use strict';
 
-    //Serial communication Class
-    //////////////////PAREI AQUIII> Problema de escopo na função onDevice. Colocar os métodos privados como privados.
+    let _connected = false;
+    let _myoInstance;
+    let _connectedMyo;
+
     class MyoService {
         constructor($timeout) {
-            this.myo = Myo;
-            this.$timeout = $timeout;
-
-            this.connected = false;
-            this.connectedMyo;
+            _myoInstance = Myo;
+            _connected = false;
         }
 
         connect() {
-            this.myo.connect('com.rafaHeringer.droneControl');
-            this.connectedMyo = this.listDevices()[0];
-            this.connected = true;
+            _myoInstance.connect('com.rafaHeringer.droneControl');
+            _connectedMyo = this.listDevices()[0];
+            _connected = true;
         }
 
         disconnect() {
             ///TODO
-            this.connectedMyo = null;
-            this.connected = false;
+            _connectedMyo = null;
+            _connected = false;
         }
 
         getConnectedDevice() {
-            return this.connectedMyo;
+            return _connectedMyo;
         }
 
         isConnected() {
@@ -33,32 +32,32 @@
         }
 
         listDevices() {
-            return this.myo.myos;
+            return _myoInstance.myos;
         }
 
         on(eventName, callback) {
-            this.myo.on(eventName, callback);
+            _myoInstance.on(eventName, callback);
         }
 
         onDevice(eventName, callback) {
             if(this.connected)
-                this.connectedMyo.on(eventName, callback);
+                _connectedMyo.on(eventName, callback);
             else 
                 this.on('connected', () => {
-                    this.$timeout(() => {
+                    setTimeout(() => {
                         console.log('myoService deviceEventRegister: event registered - ', eventName);
-                        this.connectedMyo.on(eventName, callback);
+                        _connectedMyo.on(eventName, callback);
                     }, 100);
                 });
 
-            if(this.connectedMyo)
-                this.connectedMyo.on(eventName, callback);
+            if(_connectedMyo)
+                _connectedMyo.on(eventName, callback);
         }
-       
+        
     }
 
-    //Angular module
-    angular
-        .module('app.services')
-        .service('myoService', MyoService);
+    return MyoService;
 })();
+
+//Angular module
+angular.module('app.services').service('myoService', MyoService);

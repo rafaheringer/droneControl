@@ -16,6 +16,8 @@
                 getAvailablePorts();
             }
 
+            //Serial Communication
+            //==============================
             //Get available ports
             function getAvailablePorts() {
                 serialCommService.getAvailablePorts().then(response => {
@@ -51,8 +53,13 @@
                 });
             }
             
+            //Drone control
+            //==============================
             //Drone instance
             var droneController = droneFactory;
+
+            //MYO Configuration
+            //==============================
 
             //Myo instance
             var myoController = myoFactory;

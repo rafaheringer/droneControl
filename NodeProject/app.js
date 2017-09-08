@@ -59,8 +59,31 @@ socketServer.on('connection', uniqueSocket => {
 
 
 		switch(options.command) {
+			case 'turnOff':
+				myDrone.turnOff();
+			break;
+			case 'land':
+				myDrone.land();
+			break;
+			case 'left':
+				myDrone.goLeft(options.force);
+			break;
+			case 'right':
+				myDrone.goRight(options.force);
+			break;
+			case 'up':
+				myDrone.goUp(options.force);
+			break;
+			case 'down':
+				myDrone.goDown(options.force);
+			break;
+			case 'ahead':
+
+			break;
+			case 'back':
+
+			break;
 			case 'warmUp':
-				myDrone.connect();
 				myDrone.levelUp(100, 1000);
 			break;
 		}
