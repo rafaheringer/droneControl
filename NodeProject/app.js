@@ -72,22 +72,22 @@ socketServer.on('connection', uniqueSocket => {
 				myDrone.land();
 			break;
 			case 'left':
-				myDrone.goLeft(options.force);
+				myDrone.goLeft(options.force, options.timeToExecute || null);
 			break;
 			case 'right':
-				myDrone.goRight(options.force);
+				myDrone.goRight(options.force, options.timeToExecute || null);
 			break;
 			case 'up':
-				myDrone.goUp(options.force);
+				myDrone.goUp(options.force, options.timeToExecute || null);
 			break;
 			case 'down':
-				myDrone.goDown(options.force);
+				myDrone.goDown(options.force, options.timeToExecute || null);
 			break;
 			case 'ahead':
-				myDrone.goAhead(options.force);
+				myDrone.goAhead(options.force, options.timeToExecute || null);
 			break;
 			case 'back':
-				myDrone.goBack(options.force);
+				myDrone.goBack(options.force, options.timeToExecute || null);
 			break;
 			case 'warmUp':
 				myDrone.levelUp(100, 1000);
