@@ -1,8 +1,8 @@
 var express = require('express'),
  	http = require('http'),
-	config = require('./config/config'),
 	app = express(),
 	fs = require('fs'),
+	path = require('path'),
 	httpServer = http.createServer(app),
 	droneControl = require('./modules/droneControl.js'),
 	serialComm = require('./modules/serialComm'),
@@ -12,8 +12,8 @@ var express = require('express'),
 
 //Server
 //===============================
-httpServer.listen(config.port, () => {
-	console.log('Express server listening on port ' + config.port);
+httpServer.listen('3000', () => {
+	console.log('Express server listening on port 3000');
 });
 
 //API routes
@@ -44,7 +44,13 @@ app.route('/').get((req, res, next) => {
 	});
 });
 
-module.exports = require('./config/express')(app, config);
+module.exports = require('./config/express')(app, {
+    root: path.normalize(__dirname),
+    app: {
+      name: 'nodeproject'
+    },
+    port: 3000,
+});
 
 //On connect to socket
 //===============================

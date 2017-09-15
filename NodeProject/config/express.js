@@ -9,10 +9,6 @@ var compress = require('compression');
 var methodOverride = require('method-override');
 
 module.exports = function(app, config) {
-  var env = process.env.NODE_ENV || 'development';
-  app.locals.ENV = env;
-  app.locals.ENV_DEVELOPMENT = env == 'development';
-
   //View engine
   // app.use(favicon(config.root + '/public/img/favicon.ico'));
   app.use(logger('dev'));
