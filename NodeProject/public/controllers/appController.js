@@ -68,6 +68,9 @@
                 console.log('FOOOOOOOOOOOOOOOOOOOOOOOO');
             });
 
+            //Verify acelerometer. When is a positive value, tranform the value to percentage and send UP command.
+            //When is a negative value, transform the value to percentage and send DOWN comand.
+
             init();
 
             angular.extend($scope, {

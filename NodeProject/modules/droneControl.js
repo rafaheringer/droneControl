@@ -143,6 +143,16 @@ let DroneControl = (()=>{
             //_setPPM('aileron', //WHAT?, timeToExecute, callback);
         }
 
+        goAhead(forcePercentage, timeToExecute, callback) {
+            //TODO: CALC!
+            //_setPPM('aileron', //WHAT?, timeToExecute, callback);
+        }
+
+        goBehind(forcePercentage, timeToExecute, callback) {
+            //TODO: CALC!
+            //_setPPM('aileron', //WHAT?, timeToExecute, callback);
+        }
+
     }
 
     return DroneControl;

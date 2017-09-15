@@ -84,10 +84,10 @@ socketServer.on('connection', uniqueSocket => {
 				myDrone.goDown(options.force);
 			break;
 			case 'ahead':
-
+				myDrone.goAhead(options.force);
 			break;
 			case 'back':
-
+				myDrone.goBack(options.force);
 			break;
 			case 'warmUp':
 				myDrone.levelUp(100, 1000);
