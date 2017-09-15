@@ -123,34 +123,30 @@ let DroneControl = (()=>{
 
         //Up
         goUp(forcePercentage, timeToExecute, callback) {
-            _setPPM('throttle', (forcePercentage * _PPMMax) / 100, timeToExecute, callback);
+            _setPPM('throttle', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), timeToExecute, callback);
         }
 
         //Down
         goDown(forcePercentage, timeToExecute, callback) {
-            //TODO: CALC!
-            //_setPPM('throttle', _PPMMax - ((forcePercentage * _PPMMax) / 100), timeToExecute, callback);
+            _setPPM('throttle',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), timeToExecute, callback);
         }
 
         //Go to left
         goLeft(forcePercentage, timeToExecute, callback) {
-            _setPPM('aileron', _PPMMid + ((forcePercentage * (_PPMMax - _PPMMid)) / 100), timeToExecute, callback);
+            _setPPM('aileron', _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), timeToExecute, callback);
         }
 
         //Go to right
         goRight(forcePercentage, timeToExecute, callback) {
-            //TODO: CALC!
-            //_setPPM('aileron', //WHAT?, timeToExecute, callback);
+            _setPPM('aileron', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), timeToExecute, callback);
         }
 
         goAhead(forcePercentage, timeToExecute, callback) {
-            //TODO: CALC!
-            //_setPPM('aileron', //WHAT?, timeToExecute, callback);
+            _setPPM('elevator', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), timeToExecute, callback);
         }
 
         goBehind(forcePercentage, timeToExecute, callback) {
-            //TODO: CALC!
-            //_setPPM('aileron', //WHAT?, timeToExecute, callback);
+            _setPPM('elevator',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), timeToExecute, callback);
         }
 
     }
