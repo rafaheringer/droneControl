@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en" ng-app="droneControlApp">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>MYO Drone Controller</title>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+	<link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="/assets/css/style.css"> 
+	<script src="http://localhost:35729/livereload.js"></script>
+</head>
+
+<body>
+	<div class="diagnosticsPage" ng-controller="mainAppController">
+		<div class="header component" style="position: absolute; left: 41px; top: 41px;">
+            <div class="hr3"></div>
+        
+            <div class="r titleContent">
+                <div class="c2">
+                    <img class="myoGlow" src="/assets/img/myo_glow.png">
+                </div>
+        
+                <div class="c8 o1">
+                    <div class="hrShort"></div>
+        
+                    <div class="date">
+                        <span class="time"><span>2343</span><span class="h">h</span></span><span class="day"><span>august</span> <span></span><span>23</span></span><span class="year">2017</span>
+                    </div>
+        
+                    <p class="titleCopy">
+                        <span class="light">Drone</span><span>Diagnostics</span>
+                    </p>
+                </div>
+        
+                <div class="c3 o1">
+                    <div class="randomNumbers">
+                        <span class="lightOrange">0000</span><span class="diagOrange">4893</span><br><span class="diagRed">2389</span><br><span class="lightRed">2216</span>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="hr3"></div>
+            <!-- <img class="myoImage" src="/assets/img/myo_image_live.png"> -->
+        </div>
+        
+        <div class="overrides component" style="position: absolute; left: 371px; top: 41px;">
+            <div class="hr3"></div>
+            <h1><span>Settings</span><span> </span><span></span></h1>
+        
+            <div class="lock">
+                <div class="title">
+                    <div class="text">
+                        <span>COM Port</span>
+                    </div>
+        
+                    <div class="lines">
+                        <div class="upperLine"></div>
+                        <div class="lowerLine"></div>
+                    </div>
+                </div>
+                <button ng-repeat="port in controllerData.comPorts" ng-click="connectToPort(port)" ng-bind="port.comName" ng-class="{selected: port.comName == controllerData.connectedPort.comName}"></button>
+            </div>
+        
+            <div class="lock">
+                <div class="title">
+                    <div class="text">
+                        <span>MYO Conn</span>
+                    </div>
+        
+                    <div class="lines">
+                        <div class="upperLine"></div>
+                        <div class="lowerLine"></div>
+                    </div>
+                </div>
+                <button ng-click="myoController.connected ? myoController.disconnect() : myoController.start()" ng-bind="myoController.connected ? 'CONNECTED': 'CONNECT'" ng-class="{'selected': myoController.connected}"></button>
+            </div>
+        </div>
+        
+        <div class="overrides component" style="position: absolute; left: 711px; top: 41px;">
+            <div class="hr3"></div>
+            <h1><span>Drone</span><span> </span><span>Controls</span></h1>
+        
+            <div class="lock">
+                <div class="title">
+                    <div class="text">
+                        <span>Start</span>
+                    </div>
+        
+                    <div class="lines">
+                        <div class="upperLine"></div>
+                        <div class="lowerLine"></div>
+                    </div>
+                </div>
+                <button ng-click="droneController.warmUp()">Warm up</button>
+            </div>
+        </div>
+        
+        <div class="status component" data-reactid=".0.2" style="position: absolute; left: 41px; top: 171px;"> 
+            <div class="statusTag" data-reactid=".0.2.0">
+                MYO status
+            </div>
+        
+            <div class="topSection" data-reactid=".0.2.1">
+                <div class="statusText disconnected" data-reactid=".0.2.1.0">
+                    disconnected
+                </div>
+        
+                <div class="macAddressSection" data-reactid=".0.2.1.1">
+                    <div class="hr2" data-reactid=".0.2.1.1.0"></div>
+                    <span data-reactid=".0.2.1.1.1">myo</span><span class="macAddress" data-reactid=".0.2.1.1.2">00-00-00-00-00-00</span>
+                </div>
+            </div>
+        
+            <div class="lockSection" data-reactid=".0.2.2">
+                <div class="lockIcon" data-reactid=".0.2.2.0">
+                    <img class="lock" data-reactid=".0.2.2.0.0" src="/assets/img/locked.png"><span data-reactid=".0.2.2.0.1">locked</span>
+                </div><div class="unlockIcon" data-reactid=".0.2.2.1">
+                    <img class="unlock" data-reactid=".0.2.2.1.0" src="/assets/img/unlocked.png"><span data-reactid=".0.2.2.1.1">unlocked</span>
+                </div>
+            </div>
+        
+            <div class="armSection" data-reactid=".0.2.3">
+                <div class="myoCount" data-reactid=".0.2.3.0">
+                    <span data-reactid=".0.2.3.0.0">MYO</span>
+                    <div class="count" data-reactid=".0.2.3.0.1"></div>
+                </div>
+        
+                <div class="armDirection" data-reactid=".0.2.3.1">
+                    <div class="left" data-reactid=".0.2.3.1.0">
+                        <div class="smallBar" data-reactid=".0.2.3.1.0.0"></div><div class="medBar" data-reactid=".0.2.3.1.0.1"></div><div class="largeBar" data-reactid=".0.2.3.1.0.2"></div><div class="direction" data-reactid=".0.2.3.1.0.3">L</div>
+                    </div><div class="right" data-reactid=".0.2.3.1.1">
+                        <div class="direction" data-reactid=".0.2.3.1.1.0">R</div><div class="largeBar" data-reactid=".0.2.3.1.1.1"></div><div class="medBar" data-reactid=".0.2.3.1.1.2"></div><div class="smallBar" data-reactid=".0.2.3.1.1.3"></div>
+                    </div>
+                </div>
+        
+                <div class="myoLocation" data-reactid=".0.2.3.2">
+                    <span data-reactid=".0.2.3.2.0">myo</span><span data-reactid=".0.2.3.2.1">lost</span>
+                </div>
+            </div>
+        </div>
+	</div>
+
+	<script src="/nodemodules/myo/myo.js"></script>
+	<script src="/components/angular/angular.min.js"></script>
+	<script src="/components/angular-socket-io/socket.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/clientApp.js"></script>
+	<script src="/controllers/appController.js"></script>
+	<script src="/factories/droneFactory.js"></script>
+	<script src="/factories/serialCommFactory.js"></script>
+	<script src="/services/serialCommService.js"></script>
+	<script src="/services/myoService.js"></script>
+	<script src="/factories/myoFactory.js"></script>
+</body>
+</html>

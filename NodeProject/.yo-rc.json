@@ -2,7 +2,6 @@
   "generator-express": {
     "promptValues": {
       "type": "MVC",
-      "viewEngine": "Handlebars",
       "cssPreprocessor": "None",
       "database": "None",
       "buildTool": "Gulp"

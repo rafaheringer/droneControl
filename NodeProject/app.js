@@ -2,13 +2,13 @@ var express = require('express'),
  	http = require('http'),
 	config = require('./config/config'),
 	app = express(),
+	fs = require('fs'),
 	httpServer = http.createServer(app),
 	droneControl = require('./modules/droneControl.js'),
 	serialComm = require('./modules/serialComm'),
 	socketServer = require('socket.io')(httpServer);
 
 ///TODO: Uncople the API server from WEB APP
-///TODO: Remove Handlebars
 
 //Server
 //===============================
@@ -39,9 +39,9 @@ app.route('/api/serial/connect').post((req, res, next) => {
 //Web APP routes
 //===============================
 app.route('/').get((req, res, next) => {
-    res.render('index', {
-      title: 'MYO Drone Controller'
-    });
+	fs.readFile(__dirname + '/public/index.html', 'utf8', function(err, text){
+        res.send(text);
+	});
 });
 
 module.exports = require('./config/express')(app, config);
