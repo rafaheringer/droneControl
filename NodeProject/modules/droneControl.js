@@ -97,14 +97,14 @@ let DroneControl = (()=>{
     
         //Level up drone and hold them
         levelUp(forcePercentage, timeToExecute, callback) {
-            goUp(forcePercentage, timeToExecute || 1000, () => {
+            this.goUp(forcePercentage, timeToExecute || 1000, () => {
                 _setPPM('throttle', _PPMThrottleEstable, callback);
             });
         }
         
         //Level down drone and hold them
         levelDown(forcePercentage, timeToExecute, callback) {
-            goDown(forcePercentage, timeToExecute || 1000, () => {
+            this.goDown(forcePercentage, timeToExecute || 1000, () => {
                 _setPPM('throttle', _PPMThrottleEstable, callback);
             });
         }
@@ -116,8 +116,8 @@ let DroneControl = (()=>{
 
         //Land
         land(callback) {
-            levelDown(60, 6000, () => {
-                turnOff(callback);
+            this.levelDown(60, 6000, () => {
+                this.turnOff(callback);
             });
         }
 

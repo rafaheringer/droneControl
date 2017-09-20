@@ -75,42 +75,42 @@
 
             //Land and start to fly
             myoController.deviceEventRegister('fist', () => {
-                if(droneData.started === true) {
-                    droneController.land();
-                    droneData.started = false;
-                }
+                console.log('MyoController event: fist');
 
-                else {
-                    droneController.warmUp();
-                    droneData.started = true;
+                if(myoData.listening) {
+                    if(droneData.started === true) {
+                        droneController.land();
+                        droneData.started = false;
+                    }
+
+                    else {
+                        droneController.warmUp();
+                        droneData.started = true;
+                    }
                 }
             });
 
             //Start listening commands
-            myoController.deviceEventRegister('fingers_spread', () => {
-                if(droneData.started) {
-                    myoData.listening = true;
-                }
-            });
-
-            myoController.deviceEventRegister('fingers_spread_off', () => {
-                myoData.listening = false;
+            myoController.deviceEventRegister('double_tap', () => {
+                console.log('MyoController event: double_tap');
+                myoData.listening = !myoData.listening;
+                $scope.$apply();
             });
 
 
             //Listen accelerometer
             myoController.deviceEventRegister('accelerometer', (data) => {
-                console.log('Myo accelerometer:', data);
+                //console.log('Myo accelerometer:', data);
             });
 
             //Listen gyroscope
             myoController.deviceEventRegister('gyroscope', (data) => {
-                console.log('Myo gyroscope:', data);
+                //console.log('Myo gyroscope:', data);
             });
 
             //Listen orientation
             myoController.deviceEventRegister('orientation', (data) => {
-                console.log('Myo orientation:', data);
+                //console.log('Myo orientation:', data);
             });
 
             //Verify acelerometer. When is a positive value, tranform the value to percentage and send UP command.

@@ -15,10 +15,17 @@ let MyoService = (() => {
             _myoInstance.connect('com.rafaHeringer.droneControl');
             _connectedMyo = this.listDevices()[0];
             _connected = true;
+
+            //Avoid connecting state
+            setTimeout(() => {
+                _myoInstance.setLockingPolicy('none');
+            }, 100);
         }
 
         disconnect() {
-            ///TODO
+            _myoInstance.off('connected');
+            _myoInstance.off();
+            _myoInstance.disconnect();
             _connectedMyo = null;
             _connected = false;
         }
@@ -28,7 +35,7 @@ let MyoService = (() => {
         }
 
         isConnected() {
-            return this.connected;
+            return _connected;
         }
 
         listDevices() {
@@ -40,18 +47,19 @@ let MyoService = (() => {
         }
 
         onDevice(eventName, callback) {
-            if(this.connected)
-                _connectedMyo.on(eventName, callback);
-            else 
-                this.on('connected', () => {
+            if(_connectedMyo) {
+                _myoInstance.on(eventName, callback);
+                console.log('myoService deviceEventRegister: event registered - ', eventName);
+            }
+
+            else {
+                _myoInstance.on('connected', () => {
                     setTimeout(() => {
+                        _myoInstance.on(eventName, callback);
                         console.log('myoService deviceEventRegister: event registered - ', eventName);
-                        _connectedMyo.on(eventName, callback);
                     }, 100);
                 });
-
-            if(_connectedMyo)
-                _connectedMyo.on(eventName, callback);
+            }
         }
         
     }

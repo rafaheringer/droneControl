@@ -97,46 +97,23 @@
             </div>
         </div>
         
-        <div class="status component" data-reactid=".0.2" style="position: absolute; left: 41px; top: 171px;"> 
-            <div class="statusTag" data-reactid=".0.2.0">
+        <div class="status component" style="position: absolute; left: 41px; top: 171px;"> 
+            <div class="statusTag">
                 MYO status
             </div>
         
-            <div class="topSection" data-reactid=".0.2.1">
-                <div class="statusText disconnected" data-reactid=".0.2.1.0">
-                    disconnected
-                </div>
-        
-                <div class="macAddressSection" data-reactid=".0.2.1.1">
-                    <div class="hr2" data-reactid=".0.2.1.1.0"></div>
-                    <span data-reactid=".0.2.1.1.1">myo</span><span class="macAddress" data-reactid=".0.2.1.1.2">00-00-00-00-00-00</span>
+            <div class="topSection" style="display:inline-block;">
+                <div class="statusText" ng-class="{'connected': myoController.connected, 'disconnected': !myoController.connected}">
+                    {{myoController.connected ? 'connected' : 'disconnected'}}
                 </div>
             </div>
         
-            <div class="lockSection" data-reactid=".0.2.2">
-                <div class="lockIcon" data-reactid=".0.2.2.0">
-                    <img class="lock" data-reactid=".0.2.2.0.0" src="/assets/img/locked.png"><span data-reactid=".0.2.2.0.1">locked</span>
-                </div><div class="unlockIcon" data-reactid=".0.2.2.1">
-                    <img class="unlock" data-reactid=".0.2.2.1.0" src="/assets/img/unlocked.png"><span data-reactid=".0.2.2.1.1">unlocked</span>
+            <div class="lockSection" style="float: right; margin-top: -30px;">
+                <div class="lockIcon" ng-hide="myoData.listening">
+                    <img class="lock" ng-src="{{myoController.connected  ? '/assets/img/locked_on.png' : '/assets/img/locked.png'}}"><span>locked</span>
                 </div>
-            </div>
-        
-            <div class="armSection" data-reactid=".0.2.3">
-                <div class="myoCount" data-reactid=".0.2.3.0">
-                    <span data-reactid=".0.2.3.0.0">MYO</span>
-                    <div class="count" data-reactid=".0.2.3.0.1"></div>
-                </div>
-        
-                <div class="armDirection" data-reactid=".0.2.3.1">
-                    <div class="left" data-reactid=".0.2.3.1.0">
-                        <div class="smallBar" data-reactid=".0.2.3.1.0.0"></div><div class="medBar" data-reactid=".0.2.3.1.0.1"></div><div class="largeBar" data-reactid=".0.2.3.1.0.2"></div><div class="direction" data-reactid=".0.2.3.1.0.3">L</div>
-                    </div><div class="right" data-reactid=".0.2.3.1.1">
-                        <div class="direction" data-reactid=".0.2.3.1.1.0">R</div><div class="largeBar" data-reactid=".0.2.3.1.1.1"></div><div class="medBar" data-reactid=".0.2.3.1.1.2"></div><div class="smallBar" data-reactid=".0.2.3.1.1.3"></div>
-                    </div>
-                </div>
-        
-                <div class="myoLocation" data-reactid=".0.2.3.2">
-                    <span data-reactid=".0.2.3.2.0">myo</span><span data-reactid=".0.2.3.2.1">lost</span>
+                <div class="lockIcon" ng-show="myoData.listening">
+                    <img class="lock" ng-src="{{myoController.connected  ? '/assets/img/unlocked_on.png' : '/assets/img/unlocked.png'}}"><span>unlocked</span>
                 </div>
             </div>
         </div>

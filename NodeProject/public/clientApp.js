@@ -20,12 +20,4 @@
         //Third party
         , 'btford.socket-io'
     ])
-    
-    //Configuration
-    .config(function($interpolateProvider) {
-        $interpolateProvider.startSymbol('[[');
-        $interpolateProvider.endSymbol(']]');
-    });
-
-    
 })();
