@@ -28,6 +28,11 @@
             this.service.onDevice(eventName, callback);
         }
 
+        deviceExecute(fn, ...args) {
+            if(typeof fn === 'string')
+                this.service.myoInstance.methods[fn](args);
+        }
+
         disconnect() {
             this.service.disconnect();
             this.connected = this.service.isConnected(); 

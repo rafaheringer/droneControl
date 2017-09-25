@@ -16,7 +16,19 @@
             };
 
             let droneData = {
-                started: false
+                started: false,
+                aileron: {
+                    value: 0,
+                    minValue: -0.50,
+                    maxValue: 0.50,
+                    force: 0
+                },
+                thottle: {
+                    value: 0,
+                    minValue: -100,
+                    maxValue: 100,
+                    force: 50
+                }
             };
 
             //Init
@@ -66,6 +78,25 @@
             //Drone instance
             var droneController = droneFactory;
 
+            function setAileronOrientation(value) {
+                droneData.aileron.value = value;
+                droneData.aileron.force = ((droneData.aileron.maxValue - droneData.aileron.minValue) * value);
+                $scope.$apply();
+
+                if(droneData.aileron.force <= 0) {
+                    droneController.goRight(droneData.aileron.force * -1);
+                } else {
+                    droneController.goLeft(droneData.aileron.force);
+                }
+            }
+
+            function setThrottle(value) {
+                droneData.thottle.value = value;
+                droneData.thottle.force = ((droneData.thottle.maxValue - droneData.thottle.minValue) * value);
+                $scope.$apply();
+
+            }
+
 
             //MYO Configuration
             //==============================
@@ -94,13 +125,14 @@
             myoController.deviceEventRegister('double_tap', () => {
                 console.log('MyoController event: double_tap');
                 myoData.listening = !myoData.listening;
+                myoController.deviceExecute('vibrate', myoData.listening ? 'short' : 'medium');
                 $scope.$apply();
             });
 
 
             //Listen accelerometer
             myoController.deviceEventRegister('accelerometer', (data) => {
-                //console.log('Myo accelerometer:', data);
+                //setThrottle(Math.round(data.z * 100)); //MIN: -100 MAX 100
             });
 
             //Listen gyroscope
@@ -110,11 +142,8 @@
 
             //Listen orientation
             myoController.deviceEventRegister('orientation', (data) => {
-                //console.log('Myo orientation:', data);
+                setAileronOrientation(Math.round(data.x * 100)); //MIN: -100 MAX 100
             });
-
-            //Verify acelerometer. When is a positive value, tranform the value to percentage and send UP command.
-            //When is a negative value, transform the value to percentage and send DOWN comand.
 
             init();
 

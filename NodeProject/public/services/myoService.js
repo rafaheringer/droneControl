@@ -8,6 +8,7 @@ let MyoService = (() => {
     class MyoService {
         constructor($timeout) {
             _myoInstance = Myo;
+            this.myoInstance = _myoInstance;
             _connected = false;
         }
 

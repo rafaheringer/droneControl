@@ -9,7 +9,9 @@ Control your SYMA X5C-1 or Cheerson CX10 with one Arduino and NRF24L01 module
 - [MyoSharp Introduction](https://elbruno.com/2016/07/20/myo-myosharp-a-c-sdk-implementation-for-the-myo-armband/)   
 - [SDK Windows 8.1](https://developer.microsoft.com/pt-br/windows/downloads/windows-8-1-sdk)   
 - [MYO SDK](https://developer.thalmic.com/start/)   
-- [MYO Sharp](https://github.com/tayfuzun/MyoSharp)   
+- [MYO Sharp](https://github.com/tayfuzun/MyoSharp) 
+- [MYO Techspecs](https://www.myo.com/techspecs)
+- [MYO Diagnostics](https://diagnostics.myo.com)  
 
 **Basic principles of flight**
 - [How airplanes fly](http://www.sunlakesaeroclub.org/updates_web_data/070831/BasicFlying.htm)
