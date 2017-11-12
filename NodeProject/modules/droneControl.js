@@ -7,7 +7,7 @@ let DroneControl = (()=>{
     let _setPPM;
 
     //Private properties
-    const _PPMMin = 800; //Min rotation (1000)
+    const _PPMMin = 100; //Min rotation (800 for original battery)
     const _PPMMax = 2000; //Max rotation (2000)
     const _PPMMid = 1500; 
 
@@ -16,7 +16,7 @@ let DroneControl = (()=>{
     let _PPMElevator =  _PPMMid;
     let _PPMRudder =    _PPMMid;
 
-    let _PPMThrottleEstable = 1200;
+    let _PPMThrottleEstable = 400 //1200 for original battery;
 
     let _executionQueue = [];
 
@@ -36,13 +36,13 @@ let DroneControl = (()=>{
                 _serialComm.sendData(line);
             }
 
-            _setPPM = (type, ppm, timeToExecute, callback) => {
+            _setPPM = (type, ppm, callbackTime, callback) => {
                 let timerExpiration = 100;
 
-                //Analysis the queue and de information to send data
+                //Analysis the queue and information to send data
                 function sendPPM(type, ppm) {
                     //Have a queue to execute?
-                    if(_executionQueue[type]) {
+                    if(_executionQueue[type] > 0) {
                         setTimeout(() => {
                             sendPPM(type, ppm);
                         }, timerExpiration);
@@ -54,6 +54,9 @@ let DroneControl = (()=>{
                     ppm = ppm > _PPMMax ? _PPMMax : ppm < _PPMMin ? _PPMMin : ppm;
 
                     switch(type) {
+                        case 'forceThrottleDown':
+                        _PPMThrottle = 0;
+                        break;
                         case 'throttle':
                         _PPMThrottle = ppm;
                         break;
@@ -79,74 +82,81 @@ let DroneControl = (()=>{
                 sendPPM(type, ppm);
 
                 //Have a timing?
-                if(timeToExecute) {
+                if(callbackTime) {
                     _executionQueue[type] ? _executionQueue[type]++ : _executionQueue[type] = 1;
 
-                    setTimeout(() => {
+                    setTimeout(function()  {
                         _executionQueue[type]--;
 
                         if(typeof callback == 'function')
                             callback.call();
-                    }, timeToExecute);
+                    }, callbackTime);
                 } else {
                     if(typeof callback == 'function')
                         callback.call();
                 }
+
+                
             }
         }
     
         //Level up drone and hold them
-        levelUp(forcePercentage, timeToExecute, callback) {
-            this.goUp(forcePercentage, timeToExecute || 1000, () => {
-                _setPPM('throttle', _PPMThrottleEstable, callback);
-            });
+        levelUp(callbackTime, callback) {
+            this.setThrottle(50, callbackTime || 2000, function() {
+                _setPPM('throttle', _PPMThrottleEstable, null, callback);
+            })
         }
         
         //Level down drone and hold them
-        levelDown(forcePercentage, timeToExecute, callback) {
-            this.goDown(forcePercentage, timeToExecute || 1000, () => {
-                _setPPM('throttle', _PPMThrottleEstable, callback);
-            });
+        levelDown(callbackTime, callback) {
+            _setPPM('throttle', _PPMThrottleEstable, callbackTime || 1000, () => {
+                _setPPM('throttle', _PPMMin, 3000, callback);
+            })
         }
 
         //Turnoff
         turnOff(callback) {
-            _setPPM('throttle', 0, callback);
+            _setPPM('forceThrottleDown', null, null, callback);
         }
 
         //Land
         land(callback) {
-            this.levelDown(60, 6000, () => {
+            this.levelDown(2000, function() {
                 this.turnOff(callback);
-            });
+            }.bind(this));
         }
 
         //Up
-        goUp(forcePercentage, timeToExecute, callback) {
-            _setPPM('throttle', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), timeToExecute, callback);
-        }
+        // goUp(forcePercentage, callbackTime, callback) {
+        //     _setPPM('throttle', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), callbackTime, callback);
+        // }
 
-        //Down
-        goDown(forcePercentage, timeToExecute, callback) {
-            _setPPM('throttle',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), timeToExecute, callback);
+        // //Down
+        // goDown(forcePercentage, callbackTime, callback) {
+        //     _setPPM('throttle',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), callbackTime, callback);
+        // }
+
+        //Throttle
+        setThrottle(force, callbackTime, callback) {
+            _setPPM('throttle', (force * (_PPMMax - _PPMMin) / 100 ) + _PPMMin, callbackTime, callback);
         }
 
         //Go to left
-        goLeft(forcePercentage, timeToExecute, callback) {
-            _setPPM('aileron', _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), timeToExecute, callback);
+        goLeft(forcePercentage, callbackTime, callback) {
+            _setPPM('aileron', _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), callbackTime, callback);
         }
 
         //Go to right
-        goRight(forcePercentage, timeToExecute, callback) {
-            _setPPM('aileron', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), timeToExecute, callback);
+        goRight(forcePercentage, callbackTime, callback) {
+            _setPPM('aileron', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), callbackTime, callback);
         }
 
-        goAhead(forcePercentage, timeToExecute, callback) {
-            _setPPM('elevator', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), timeToExecute, callback);
+        goAhead(forcePercentage, callbackTime, callback) {
+            _setPPM('elevator', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), callbackTime, callback);
         }
 
-        goBehind(forcePercentage, timeToExecute, callback) {
-            _setPPM('elevator',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), timeToExecute, callback);
+        goBehind(forcePercentage, callbackTime, callback) {
+            _setPPM('elevator',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), callbackTime, callback);
         }
 
     }

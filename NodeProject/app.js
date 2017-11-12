@@ -3,12 +3,16 @@ var express = require('express'),
 	app = express(),
 	fs = require('fs'),
 	path = require('path'),
+	bodyParser = require('body-parser'),
 	httpServer = http.createServer(app),
 	droneControl = require('./modules/droneControl.js'),
 	serialComm = require('./modules/serialComm'),
 	socketServer = require('socket.io')(httpServer);
 
 ///TODO: Uncople the API server from WEB APP
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 //Server
 //===============================
@@ -24,7 +28,9 @@ app.route('/api/serial/getPorts').get((req, res, next) => {
     });
 });
 
-app.route('/api/serial/connect').post((req, res, next) => {
+
+
+app.route('/api/serial/connect').post(function(req, res, next) {
     try {
         serialComm.connect(req.body.comName, {
             baudRate: 115200
@@ -77,11 +83,14 @@ socketServer.on('connection', uniqueSocket => {
 			case 'right':
 				myDrone.goRight(options.force, options.timeToExecute || null);
 			break;
-			case 'up':
-				myDrone.goUp(options.force, options.timeToExecute || null);
+			// case 'up':
+			// 	myDrone.goUp(options.force, options.timeToExecute || null);
+			// break;
+			// case 'down':
+			// 	myDrone.goDown(options.force, options.timeToExecute || null);
+			case 'throttle':
+				myDrone.setThrottle(options.force, options.timeToExecute || null);
 			break;
-			case 'down':
-				myDrone.goDown(options.force, options.timeToExecute || null);
 			break;
 			case 'ahead':
 				myDrone.goAhead(options.force, options.timeToExecute || null);
@@ -90,7 +99,7 @@ socketServer.on('connection', uniqueSocket => {
 				myDrone.goBack(options.force, options.timeToExecute || null);
 			break;
 			case 'warmUp':
-				myDrone.levelUp(100, 1000);
+				myDrone.levelUp();
 			break;
 		}
 	});

@@ -23,10 +23,10 @@
                     maxValue: 0.50,
                     force: 0
                 },
-                thottle: {
+                throttle: {
                     value: 0,
-                    minValue: -100,
-                    maxValue: 100,
+                    minValue: -50,
+                    maxValue: 50,
                     force: 50
                 }
             };
@@ -80,7 +80,8 @@
 
             function setAileronOrientation(value) {
                 droneData.aileron.value = value;
-                droneData.aileron.force = ((droneData.aileron.maxValue - droneData.aileron.minValue) * value);
+                droneData.aileron.force = value;
+                //console.log(value,droneData.aileron.force);
                 $scope.$apply();
 
                 if(droneData.aileron.force <= 0) {
@@ -91,9 +92,15 @@
             }
 
             function setThrottle(value) {
-                droneData.thottle.value = value;
-                droneData.thottle.force = ((droneData.thottle.maxValue - droneData.thottle.minValue) * value);
+                droneData.throttle.value = value;
+                droneData.throttle.force = ((100 * value) / (droneData.throttle.maxValue - droneData.throttle.minValue) ) - droneData.throttle.minValue;
                 $scope.$apply();
+
+                // if(droneData.throttle.force <= 50) {
+                //     droneController.goDown(50 - droneData.throttle.force);
+                // } else {
+                //     droneController.goUp(droneData.throttle.force - 50);
+                // }
 
             }
 
@@ -142,7 +149,8 @@
 
             //Listen orientation
             myoController.deviceEventRegister('orientation', (data) => {
-                setAileronOrientation(Math.round(data.x * 100)); //MIN: -100 MAX 100
+                //setAileronOrientation(Math.round(data.x * 100)); //MIN: -100 MAX 100
+                //setThrottle(Math.round(data.y * 100));
             });
 
             init();

@@ -1,6 +1,15 @@
 # droneControl
 Control your SYMA X5C-1 or Cheerson CX10 with one Arduino and NRF24L01 module
 
+**Start WEB project**
+
+1. Go to `NodeProject`folder
+2. Execute `npm install`
+3. Execute `bower install`
+4. Start with `gulp develop`
+
+Remember to start the **Myo Connect** program. The WEB APP will start listening the MYO socket. 
+
 **Radio control references**   
 - [Teach your PC to fly a Mini-Drone!](https://www.makehardware.com/2016/04/24/teach-your-pc-to-fly-a-mini-drone/)   
 - [nRF24L01 RC transmitter for Cheerson CX-10 with serial interface to a PC](https://github.com/perrytsao/nrf24_cx10_pc)   

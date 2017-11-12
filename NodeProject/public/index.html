@@ -98,7 +98,7 @@
 
             <div style="margin-top: 30px; padding: 100px 0; position: relative;border:1px solid rgba(88,188,204,0.7); border-radius: 5px;">
                 <div
-                ng-style="{'margin-left': (droneData.aileron.force * -1) + '%'}" 
+                ng-style="{'margin-left': (droneData.aileron.force * -1) + '%', 'zoom': (droneData.throttle.force / 100)}" 
                 style="border-radius: 100%; background: white; width: 30px; height: 30px; position: absolute; top: calc(50% - 15px); left: calc(50% - 15px);"></div>
             </div>
         </div>

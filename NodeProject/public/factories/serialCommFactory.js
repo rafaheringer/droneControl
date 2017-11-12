@@ -8,7 +8,7 @@
         }
 
         send(message, command) {
-            console.log('Socket sent:', message, command);
+            //console.log('Socket sent:', message, command);
             this.socketClient.emit(message, command);
         }
     }

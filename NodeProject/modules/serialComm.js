@@ -18,9 +18,9 @@ let eventsList = {
     receiveData: {eventName: 'receiveData', line: null}
 };
 
-registerEvent(eventsList.sendDataError.name, ob => console.error('SerialComm sendData error: ', ob.error));
-registerEvent(eventsList.connectionError.name, ob => console.error('SerialComm connection error: ', ob.error));
-registerEvent(eventsList.receiveData.name, ob => {if(ob.line) console.log('SerialComm receivedData:', ob.line)});
+registerEvent(eventsList.sendDataError.name, ob => ob.error ? console.error('SerialComm sendData error: ', ob.error) : null);
+registerEvent(eventsList.connectionError.name, ob => ob.error ? console.error('SerialComm connection error: ', ob.error) : null);
+registerEvent(eventsList.receiveData.name, ob => ob.line ? console.log('SerialComm receivedData:', ob.line) : null);
 
 /////////////////////Connection
 function getAvailableSerialPorts(callback) {
@@ -32,8 +32,8 @@ function connect(serialPortName, serialPortOptions, callback){
 
     console.log('SerialComm connect: connected');
 
-    connectedPort.on('error', err => eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: err}, eventsList.connectionError)));
-    connectedPort.on('data', line => eventHandler.emit(eventsList.receiveData.name, extendObject({line: line}, eventsList.receiveData)));
+    connectedPort.on('error', err => err ? eventHandler.emit(eventsList.connectionError.eventName, extendObject({error: err}, eventsList.connectionError)):null);
+    connectedPort.on('data', line => line ? eventHandler.emit(eventsList.receiveData.name, extendObject({line: line}, eventsList.receiveData)):null);
 
     return connectedPort;
 };
@@ -62,11 +62,11 @@ function sendData(line) {
 
     if(connectedPort)
         return connectedPort.write(line, err => {
-            if(err) 
+            if(typeof err != undefined) 
                 return eventHandler.emit(eventsList.sendDataError.eventName, extendObject({error: err}, eventsList.sendDataError));
 
-            console.log('SerialComm sentData: ', line);
-            eventHandler.emit(eventsList.dataSent.name, extendObject({line: line}, eventsList.dataSent));
+            //console.log('SerialComm sentData: ', line);
+            eventHandler.emit(eventsList.dataSent.eventName, extendObject({line: line}, eventsList.dataSent));
         });
 
     else 

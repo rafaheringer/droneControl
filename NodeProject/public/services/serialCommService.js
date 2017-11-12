@@ -15,12 +15,8 @@
         }
         
         connectToPort(portName) {
-            return this.http({
-                url: '/api/serial/connect',
-                method: 'POST',
-                data: {
+            return this.http.post('/api/serial/connect', {
                     comName: portName
-                }
             });
         }
     }
