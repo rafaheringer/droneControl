@@ -74,32 +74,14 @@ socketServer.on('connection', uniqueSocket => {
 			case 'turnOff':
 				myDrone.turnOff();
 			break;
-			case 'land':
-				myDrone.land();
+			case 'aileron':
+				myDrone.setAileron(options.force);
 			break;
-			case 'left':
-				myDrone.goLeft(options.force, options.timeToExecute || null);
-			break;
-			case 'right':
-				myDrone.goRight(options.force, options.timeToExecute || null);
-			break;
-			// case 'up':
-			// 	myDrone.goUp(options.force, options.timeToExecute || null);
-			// break;
-			// case 'down':
-			// 	myDrone.goDown(options.force, options.timeToExecute || null);
 			case 'throttle':
-				myDrone.setThrottle(options.force, options.timeToExecute || null);
+				myDrone.setThrottle(options.force);
 			break;
-			break;
-			case 'ahead':
-				myDrone.goAhead(options.force, options.timeToExecute || null);
-			break;
-			case 'back':
-				myDrone.goBack(options.force, options.timeToExecute || null);
-			break;
-			case 'warmUp':
-				myDrone.levelUp();
+			case 'elevator':
+				myDrone.setElevator(options.force);
 			break;
 		}
 	});

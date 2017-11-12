@@ -7,39 +7,21 @@
             this.serialComm = serialCommFactory;
         }
 
-        goUp(force) {
-            this.serialComm.send('droneCommand',{command: 'up', force: force});
+        throttle(force) {
+            this.serialComm.send('droneCommand',{command: 'throttle', force: force});
         }
 
-        goLeft(force) {
-            this.serialComm.send('droneCommand',{command: 'left', force: force});
+        aileron(force) {
+            this.serialComm.send('droneCommand',{command: 'aileron', force: force});
         }
 
-        goAhead(force) {
-            this.serialComm.send('droneCommand',{command: 'ahead', force: force});
+        elevator(force) {
+            this.serialComm.send('droneCommand',{command: 'elevator', force: force});
         }
 
-        goBack(force) {
-            this.serialComm.send('droneCommand',{command: 'back', force: force});
+        turnOff(force) {
+            this.serialComm.send('droneCommand',{command: 'turnOff'});
         }
-
-        goRight(force) {
-            this.serialComm.send('droneCommand',{command: 'right', force: force});
-        }
-
-        goDown(force) {
-            this.serialComm.send('droneCommand',{command: 'down', force: force});
-        }
-
-        warmUp() {
-            this.serialComm.send('droneCommand', {command: 'warmUp'});
-        }
-
-        land() {
-            this.serialComm.send('droneCommand', {command: 'land'});
-        }
-
-
     }
 
     //Angular module

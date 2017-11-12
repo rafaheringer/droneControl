@@ -7,18 +7,18 @@ let DroneControl = (()=>{
     let _setPPM;
 
     //Private properties
-    const _PPMMin = 100; //Min rotation (800 for original battery)
+    const _PPMMin = 500; //Min rotation (800 for original battery)
     const _PPMMax = 2000; //Max rotation (2000)
     const _PPMMid = 1500; 
 
-    let _PPMThrottle =  _PPMMin;
+    const _PPMThrottleMin = 0;
+    const _PPMThrottleMax = 1000;
+
+    let _PPMThrottle =  _PPMThrottleMin;
     let _PPMAileron =   _PPMMid;
     let _PPMElevator =  _PPMMid;
     let _PPMRudder =    _PPMMid;
 
-    let _PPMThrottleEstable = 400 //1200 for original battery;
-
-    let _executionQueue = [];
 
     class DroneControl {
         
@@ -36,129 +36,56 @@ let DroneControl = (()=>{
                 _serialComm.sendData(line);
             }
 
-            _setPPM = (type, ppm, callbackTime, callback) => {
-                let timerExpiration = 100;
-
-                //Analysis the queue and information to send data
-                function sendPPM(type, ppm) {
-                    //Have a queue to execute?
-                    if(_executionQueue[type] > 0) {
-                        setTimeout(() => {
-                            sendPPM(type, ppm);
-                        }, timerExpiration);
-                        
-                        return;
-                    }
-
-                    //Verify ppm limits
+            _setPPM = (type, ppm) => {
+                //Verify ppm limits
+                if(type != 'throttle')
                     ppm = ppm > _PPMMax ? _PPMMax : ppm < _PPMMin ? _PPMMin : ppm;
+                else
+                    ppm = ppm > _PPMThrottleMax ? _PPMThrottleMax : ppm < _PPMThrottleMin ? _PPMThrottleMin : ppm;
 
-                    switch(type) {
-                        case 'forceThrottleDown':
-                        _PPMThrottle = 0;
-                        break;
-                        case 'throttle':
-                        _PPMThrottle = ppm;
-                        break;
-                        case 'aileron':
-                        _PPMAileron = ppm;
-                        break;
-                        case 'elevator':
-                        _PPMElevator = ppm;
-                        break;
-                        case 'rudder':
-                        _PPMRudder = ppm;
-                        break;
-    
-                        default:
-                            console.error('DroneControl SetPPM: Type is not defined. TYPE:', type);
-                        break;
-                    }
-    
-                    //Send PPM to serial port
-                    _sendData();
+                switch(type) {
+                    case 'throttle':
+                    _PPMThrottle = ppm;
+                    break;
+                    case 'aileron':
+                    _PPMAileron = ppm;
+                    break;
+                    case 'elevator':
+                    _PPMElevator = ppm;
+                    break;
+                    case 'rudder':
+                    _PPMRudder = ppm;
+                    break;
+
+                    default:
+                        console.error('DroneControl SetPPM: Type is not defined. TYPE:', type);
+                    break;
                 }
 
-                sendPPM(type, ppm);
-
-                //Have a timing?
-                if(callbackTime) {
-                    _executionQueue[type] ? _executionQueue[type]++ : _executionQueue[type] = 1;
-
-                    setTimeout(function()  {
-                        _executionQueue[type]--;
-
-                        if(typeof callback == 'function')
-                            callback.call();
-                    }, callbackTime);
-                } else {
-                    if(typeof callback == 'function')
-                        callback.call();
-                }
-
-                
+                //Send PPM to serial port
+                _sendData();
             }
-        }
-    
-        //Level up drone and hold them
-        levelUp(callbackTime, callback) {
-            this.setThrottle(50, callbackTime || 2000, function() {
-                _setPPM('throttle', _PPMThrottleEstable, null, callback);
-            })
-        }
-        
-        //Level down drone and hold them
-        levelDown(callbackTime, callback) {
-            _setPPM('throttle', _PPMThrottleEstable, callbackTime || 1000, () => {
-                _setPPM('throttle', _PPMMin, 3000, callback);
-            })
         }
 
         //Turnoff
         turnOff(callback) {
-            _setPPM('forceThrottleDown', null, null, callback);
+            _setPPM('throttle', 0);
         }
-
-        //Land
-        land(callback) {
-            this.levelDown(2000, function() {
-                this.turnOff(callback);
-            }.bind(this));
-        }
-
-        //Up
-        // goUp(forcePercentage, callbackTime, callback) {
-        //     _setPPM('throttle', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), callbackTime, callback);
-        // }
-
-        // //Down
-        // goDown(forcePercentage, callbackTime, callback) {
-        //     _setPPM('throttle',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), callbackTime, callback);
-        // }
-
+        
         //Throttle
-        setThrottle(force, callbackTime, callback) {
-            _setPPM('throttle', (force * (_PPMMax - _PPMMin) / 100 ) + _PPMMin, callbackTime, callback);
+        setThrottle(force) {
+            _setPPM('throttle', (force * (_PPMThrottleMax - _PPMThrottleMin) / 100 ) + _PPMThrottleMin);
         }
 
-        //Go to left
-        goLeft(forcePercentage, callbackTime, callback) {
-            _setPPM('aileron', _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), callbackTime, callback);
+        //Aileron
+        setAileron(force) {
+            //_setPPM('aileron', _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100));
         }
 
-        //Go to right
-        goRight(forcePercentage, callbackTime, callback) {
-            _setPPM('aileron', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), callbackTime, callback);
+        //Elevator
+        setElevator(force) {
+            // _setPPM('elevator', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100));
         }
-
-        goAhead(forcePercentage, callbackTime, callback) {
-            _setPPM('elevator', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100), callbackTime, callback);
-        }
-
-        goBehind(forcePercentage, callbackTime, callback) {
-            _setPPM('elevator',  _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100), callbackTime, callback);
-        }
-
     }
 
     return DroneControl;
