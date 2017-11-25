@@ -4,8 +4,8 @@
     angular
         .module('droneControlApp')
         .controller('mainAppController', 
-        ['$scope', 'droneFactory', 'serialCommService', '$timeout', 'myoFactory',
-        ($scope, droneFactory, serialCommService, $timeout, myoFactory) => {
+        ['$scope', 'droneFactory', 'serialCommService', '$timeout', 'myoFactory', '$interval',
+        ($scope, droneFactory, serialCommService, $timeout, myoFactory, $interval) => {
             let controllerData = {
                 comPorts: [],
                 connectedPort: null
@@ -17,6 +17,7 @@
 
             let droneData = {
                 started: false,
+                speedLimit: 80,
                 aileron: {
                     force: 0
                 },
@@ -74,64 +75,106 @@
             //==============================
 
             function setAileronOrientation(force) {
-                droneData.aileron.force = force;
+                droneData.aileron.force = force > droneData.speedLimit ? droneData.speedLimit : force < -droneData.speedLimit ? -droneData.speedLimit : force;
                 droneFactory.aileron(droneData.aileron.force);
                 //$scope.$apply();
             }
 
             function setThrottle(force) {
-                droneData.throttle.force = force;//((100 * force) / (droneData.throttle.maxValue - droneData.throttle.minValue) ) - droneData.throttle.minValue;
+                droneData.throttle.force = force;// > droneData.speedLimit ? droneData.speedLimit : force < 100 - droneData.speedLimit ? 100 - droneData.speedLimit : force;
                 droneFactory.throttle(droneData.throttle.force);
                 //$scope.$apply();
             }
 
             function setElevator(force) {
-
+                droneData.elevator.force = force > droneData.speedLimit ? droneData.speedLimit : force < -droneData.speedLimit ? -droneData.speedLimit : force;
+                droneFactory.elevator(droneData.elevator.force);
             }
 
             //Key listening
             //==============================
-            function keyListening(event) {
-                //TODO: seamless progress
-                let keybind = false;
-
-                switch(event.key) {
-                    case 'a':
-                        setAileronOrientation(100);
-                        keybind = true;
-                    break;
-                    case 'd':
-                        setAileronOrientation(-100);
-                        keybind = true;
-                    break;
-                    case 'ArrowUp':
-                        setThrottle(100);
-                        keybind = true;
-                    break;
-                    case 'ArrowDown':
-                        setThrottle(1);
-                        keybind = true;
-                    break;
+            let keys = {
+                a: {
+                    value: 0,
+                    minValue: -100,
+                    defaultValue: 0,
+                    intervalFn: null,
+                    triggerFn: setAileronOrientation
+                },
+                d: {
+                    value: 0,
+                    maxValue: 100,
+                    defaultValue: 0,
+                    intervalFn: null,
+                    triggerFn: setAileronOrientation
+                },
+                w: {
+                    value: 0,
+                    maxValue: 100,
+                    defaultValue: 0,
+                    intervalFn: null,
+                    triggerFn: setElevator
+                },
+                s: {
+                    value: 0,
+                    minValue: -100,
+                    defaultValue: 0,
+                    intervalFn: null,
+                    triggerFn: setElevator
+                },
+                ArrowUp: {
+                    value: 50,
+                    maxValue: 100,
+                    defaultValue: 50,
+                    intervalFn: null,
+                    triggerFn: setThrottle
+                },
+                ArrowDown: {
+                    value: 50,
+                    minValue: 1,
+                    defaultValue: 50,
+                    intervalFn: null,
+                    triggerFn: setThrottle
                 }
+                
+            };
 
-                if(keybind)
+            function smoothIncrease(keyPressed) {
+                keyPressed.intervalFn = $interval(()=>{
+                    let step = 10;
+
+                    if((keyPressed.maxValue && keyPressed.value < keyPressed.maxValue) || (keyPressed.minValue && keyPressed.value > keyPressed.minValue)) {
+
+                        if(keyPressed.maxValue)
+                            keyPressed.value = keyPressed.value >= keyPressed.maxValue ? keyPressed.value : keyPressed.value + step;
+                        else
+                            keyPressed.value = keyPressed.value <= keyPressed.minValue ? keyPressed.value : keyPressed.value - step;
+                            
+                        keyPressed.triggerFn(keyPressed.value);
+                        console.log(keyPressed.value);
+                    }
+                }, 60);
+            }
+
+            function keyListening(event) {
+                const keyPressed = keys[event.key];
+
+                if(keyPressed) {
                     event.preventDefault();
+                    
+                    if(!keyPressed.intervalFn) 
+                        smoothIncrease(keyPressed);
+                }
             }
 
             function keyUp(event) {
-                switch(event.key) {
-                    case 'a':
-                        setAileronOrientation(0);
-                    break;
-                    case 'd':
-                        setAileronOrientation(0);
-                    break;
-                    case 'ArrowUp':
-                        setThrottle(50);
-                    break;
-                    case 'ArrowDown':
-                        setThrottle(50);
-                    break;
+                const keyPressed = keys[event.key];
+
+                if(keyPressed) {
+                    $interval.cancel(keyPressed.intervalFn);
+                    keyPressed.intervalFn = null;
+                    keyPressed.value = keyPressed.defaultValue;
+                    keyPressed.triggerFn(keyPressed.value);
                 }
             }
 

@@ -7,12 +7,12 @@ let DroneControl = (()=>{
     let _setPPM;
 
     //Private properties
-    const _PPMMin = 500; //Min rotation (800 for original battery)
+    const _PPMMin = 1000; //Min rotation (800 for original battery)
     const _PPMMax = 2000; //Max rotation (2000)
     const _PPMMid = 1500; 
 
-    const _PPMThrottleMin = 0;
-    const _PPMThrottleMax = 1000;
+    const _PPMThrottleMin = 1000;
+    const _PPMThrottleMax = 1800;
 
     let _PPMThrottle =  _PPMThrottleMin;
     let _PPMAileron =   _PPMMid;
@@ -79,12 +79,20 @@ let DroneControl = (()=>{
 
         //Aileron
         setAileron(force) {
-            //_setPPM('aileron', _PPMMid - (((_PPMMid - _PPMMin) * forcePercentage) / 100));
+            var forcePercentage = 50 + ((force * 100) / 200); //- 100 = 0%, 0 = 50%, 100 = 100%
+            var distance = _PPMMax - _PPMMin;
+            var finalValue = (forcePercentage * distance) / 100;
+
+            _setPPM('aileron', _PPMMin + finalValue);
         }
 
         //Elevator
         setElevator(force) {
-            // _setPPM('elevator', _PPMMid + (((_PPMMax - _PPMMid) * forcePercentage) / 100));
+            var forcePercentage = 50 + ((force * 100) / 200); //- 100 = 0%, 0 = 50%, 100 = 100%
+            var distance = _PPMMax - _PPMMin;
+            var finalValue = (forcePercentage * distance) / 100;
+
+            _setPPM('elevator', _PPMMin + finalValue);
         }
     }
 

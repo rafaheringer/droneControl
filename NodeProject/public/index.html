@@ -98,7 +98,7 @@
 
             <div style="margin-top: 30px; padding: 100px 0; position: relative;border:1px solid rgba(88,188,204,0.7); border-radius: 5px;">
                 <div
-                ng-style="{'left': 'calc(' + (droneData.aileron.force/2 * -1) + '%)', 'bottom': 'calc(' + (droneData.throttle.force) + '% - 15px)'}" 
+                ng-style="{'left': 'calc(' + (droneData.aileron.force/2) + '%)', 'bottom': 'calc(' + (droneData.throttle.force) + '% - 15px)', 'transform': 'scale('+ (((droneData.elevator.force * 100) / -10000) + 1.5) +')'}" 
                 style="border-radius: 100%; background: white; width: 30px; height: 30px; margin-left: calc(50% - 15px); position: absolute;"></div>
             </div>
         </div>
